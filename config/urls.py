@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/v1/auth/token/', TokenObtainPairView.as_view(serializer_class=MyTokenObtainPairSerializer), name='token_obtain_pair'),
     path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/users/', include('users.urls')),
+    path('api/v1/products/', include('products.urls')),
 ]
