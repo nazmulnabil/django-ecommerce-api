@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     # Local apps
     'core',
     'users',
-    'products'
+    'products',
+    'orders'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'TOKEN_OBTAIN_PAIR_SERIALIZER': 'users.serializers_jwt.MyTokenObtainPairSerializer',
 }
+
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
