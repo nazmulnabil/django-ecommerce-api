@@ -1,17 +1,11 @@
 from django.db import transaction
 from .models import Order
 from products.models import Product
-from users.models import User
 
-def place_order(user: User, product_id: int, quantity: int) -> Order:
-    """
-    Handles atomic order placement with row-level locking.
-    
-    Raises:
-        ValueError: If stock is insufficient.
-        Product.DoesNotExist: If product not found.
-    """
+def place_order(user, product_id: int, quantity: int) -> Order:
     with transaction.atomic():
+        # This locks the row in the DB so no other request can change it 
+        # until this transaction finishes.
         product = Product.objects.select_for_update().get(id=product_id)
         
         if product.stock < quantity:
