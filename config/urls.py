@@ -14,22 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# config/urls.py — clean version
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView 
-from users.serializers_jwt import MyTokenObtainPairSerializer
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/core/', include('core.urls')), 
-    path('api/v1/auth/token/', TokenObtainPairView.as_view(serializer_class=MyTokenObtainPairSerializer), name='token_obtain_pair'),
-    path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/v1/users/', include('users.urls')),
-    path('api/v1/products/', include('products.urls')),
+    path('api/v1/auth/', include('users.urls')),
 ]
 
-# This is the "Industry Standard" way to serve media files in dev
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
