@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
         # Third-party apps
     'rest_framework',
+    'drf_spectacular',
     
     # Local apps
     'core',
@@ -127,9 +128,23 @@ STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
+    # Who reads the JWT token and identifies the user
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+
+    # Require login by default on all endpoints
+    # Override per view with permission_classes = [AllowAny]
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+
+    # How drf-spectacular generates OpenAPI schema
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    # Pagination applied globally to all list endpoints
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 from datetime import timedelta
