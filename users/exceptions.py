@@ -16,3 +16,6 @@ class SellerAlreadyExistsError(DomainException):
 
 class InvalidCredentialsError(DomainException):
     pass
+
+class UserNotFoundError(DomainException):     
+    pass
