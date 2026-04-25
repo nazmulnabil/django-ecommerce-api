@@ -1,6 +1,7 @@
 asgiref==3.11.1
 attrs==26.1.0
 Django==6.0.4
+django-environ==0.13.0
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
 drf-spectacular==0.29.0
@@ -12,6 +13,7 @@ model-bakery==1.23.4
 packaging==26.2
 pillow==12.2.0
 pluggy==1.6.0
+psycopg2-binary==2.9.12
 Pygments==2.20.0
 PyJWT==2.12.1
 pytest==9.0.3
