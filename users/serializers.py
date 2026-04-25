@@ -63,3 +63,13 @@ class SellerRegistrationInputSerializer(serializers.Serializer):
 class LoginInputSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+    
+class TokenSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField()
+
+
+class AuthResponseSerializer(serializers.Serializer):
+    user = UserOutputSerializer()
+    tokens = TokenSerializer()
+    

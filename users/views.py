@@ -16,6 +16,7 @@ from .serializers import (
     UserOutputSerializer,
     AddressOutputSerializer,
     SellerOutputSerializer,
+    AuthResponseSerializer,
 )
 from .services import (
     register_user,
@@ -38,7 +39,7 @@ from .exceptions import (
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(request=UserRegistrationInputSerializer, responses=UserOutputSerializer)
+    @extend_schema(request=UserRegistrationInputSerializer, responses=AuthResponseSerializer)
     def post(self, request):
         serializer = UserRegistrationInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -61,7 +62,7 @@ class RegisterView(APIView):
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(request=LoginInputSerializer)
+    @extend_schema(request=LoginInputSerializer, responses=AuthResponseSerializer)
     def post(self, request):
         serializer = LoginInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
