@@ -1,6 +1,6 @@
 import pytest
 from model_bakery import baker
-from users.models import User, Address, Seller
+from users.models import User, Address
 
 
 pytestmark = pytest.mark.django_db
@@ -57,22 +57,3 @@ class TestAddressModel:
         assert Address.objects.filter(user_id=user_id).count() == 0
 
 
-class TestSellerModel:
-
-    def test_str_returns_store_name(self):
-        seller = baker.make(Seller, store_name='Nabil Store')
-        assert str(seller) == 'Nabil Store'
-
-    def test_one_seller_per_user(self):
-        user = baker.make(User)
-        baker.make(Seller, user=user)
-        with pytest.raises(Exception):
-            baker.make(Seller, user=user)
-
-    def test_is_verified_false_by_default(self):
-        seller = baker.make(Seller)
-        assert seller.is_verified == False
-
-    def test_rating_default(self):
-        seller = baker.make(Seller)
-        assert float(seller.rating) == 0.0

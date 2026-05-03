@@ -9,11 +9,6 @@ class EmailAlreadyExistsError(DomainException):
 class AddressNotFoundError(DomainException):
     pass
 
-
-class SellerAlreadyExistsError(DomainException):
-    pass
-
-
 class InvalidCredentialsError(DomainException):
     pass
 

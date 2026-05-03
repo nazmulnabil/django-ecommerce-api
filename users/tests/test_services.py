@@ -1,6 +1,6 @@
 import pytest
 from model_bakery import baker
-from users.models import User, Address, Seller
+from users.models import User, Address
 from users.services import (
     register_user,
     authenticate_user,
@@ -8,12 +8,10 @@ from users.services import (
     create_address,
     set_default_address,
     delete_address,
-    register_seller,
-)
+    )
 from users.exceptions import (
     EmailAlreadyExistsError,
     AddressNotFoundError,
-    SellerAlreadyExistsError,
     InvalidCredentialsError,
 )
 
@@ -222,22 +220,3 @@ class TestDeleteAddress:
             delete_address(user=user1, address_id=address.id)
 
 
-class TestRegisterSeller:
-
-    def test_creates_seller(self):
-        user = baker.make(User)
-        seller = register_seller(user=user, store_name='Nabil Store')
-        assert seller.id is not None
-        assert seller.store_name == 'Nabil Store'
-        assert seller.user == user
-
-    def test_raises_if_already_a_seller(self):
-        user = baker.make(User)
-        register_seller(user=user, store_name='Nabil Store')
-        with pytest.raises(SellerAlreadyExistsError):
-            register_seller(user=user, store_name='Another Store')
-
-    def test_is_verified_false_by_default(self):
-        user = baker.make(User)
-        seller = register_seller(user=user, store_name='Nabil Store')
-        assert seller.is_verified == False

@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import User, Address, Seller
+from .models import User, Address
 
 
 # ── Output Serializers (read) ──────────────────────────
@@ -12,21 +12,15 @@ class AddressOutputSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class SellerOutputSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Seller
-        fields = ['id', 'store_name', 'is_verified', 'rating']
-        read_only_fields = fields
 
 
 class UserOutputSerializer(serializers.ModelSerializer):
     addresses = AddressOutputSerializer(many=True, read_only=True)
-    seller_profile = SellerOutputSerializer(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'email', 'username', 'phone', 'profile_picture',
-                  'addresses', 'seller_profile']
+                  'addresses']
         read_only_fields = fields
 
 
@@ -56,8 +50,7 @@ class AddressInputSerializer(serializers.Serializer):
     is_default = serializers.BooleanField(default=False)
 
 
-class SellerRegistrationInputSerializer(serializers.Serializer):
-    store_name = serializers.CharField(max_length=255)
+
 
 
 class LoginInputSerializer(serializers.Serializer):

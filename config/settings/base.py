@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     # Local
     'core',
     'users',
-    'products',
+    'catalog',
 ]
 
 # ─── Middleware ────────────────────────────────────────────────────────────────

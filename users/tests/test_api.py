@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 from model_bakery import baker
-from users.models import User, Address, Seller
+from users.models import User, Address
 from users.services import register_user
 
 
@@ -210,30 +210,3 @@ class TestAddressDetailView:
         assert response.status_code == 404
 
 
-# ─────────────────────────────────────────
-# SELLER
-# ─────────────────────────────────────────
-
-class TestSellerRegisterView:
-
-    def test_register_seller(self, auth_client):
-        response = auth_client.post('/api/v1/auth/seller/register/', {
-            'store_name': 'Nabil Store',
-        })
-        assert response.status_code == 201
-        assert response.data['store_name'] == 'Nabil Store'
-
-    def test_register_seller_twice_returns_409(self, auth_client):
-        auth_client.post('/api/v1/auth/seller/register/', {
-            'store_name': 'Nabil Store',
-        })
-        response = auth_client.post('/api/v1/auth/seller/register/', {
-            'store_name': 'Another Store',
-        })
-        assert response.status_code == 409
-
-    def test_register_seller_unauthenticated_returns_401(self, client):
-        response = client.post('/api/v1/auth/seller/register/', {
-            'store_name': 'Nabil Store',
-        })
-        assert response.status_code == 401
