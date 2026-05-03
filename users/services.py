@@ -3,11 +3,10 @@
 from django.db import transaction, IntegrityError
 from django.contrib.auth import authenticate
 
-from .models import User, Address, Seller
+from .models import User, Address
 from .exceptions import (
     EmailAlreadyExistsError,
     AddressNotFoundError,
-    SellerAlreadyExistsError,
     InvalidCredentialsError,
 )
 
@@ -104,7 +103,3 @@ def delete_address(*, user: User, address_id: int) -> None:
     address.delete()
 
 
-def register_seller(*, user: User, store_name: str) -> Seller:
-    if Seller.objects.filter(user=user).exists():
-        raise SellerAlreadyExistsError("User is already a registered seller.")
-    return Seller.objects.create(user=user, store_name=store_name)

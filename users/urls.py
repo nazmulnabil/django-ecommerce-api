@@ -16,7 +16,5 @@ urlpatterns = [
     # Addresses
     path('users/me/addresses/', views.AddressListCreateView.as_view(), name='address-list'),
     path('users/me/addresses/<int:address_id>/', views.AddressDetailView.as_view(), name='address-detail'),
-
-    # Seller
-    path('seller/register/', views.SellerRegisterView.as_view(), name='seller-register'),
+    
 ]

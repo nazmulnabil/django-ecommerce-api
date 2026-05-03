@@ -1,5 +1,3 @@
-# users/views.py
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,11 +9,9 @@ from .serializers import (
     UserRegistrationInputSerializer,
     UserProfileUpdateInputSerializer,
     AddressInputSerializer,
-    SellerRegistrationInputSerializer,
     LoginInputSerializer,
     UserOutputSerializer,
     AddressOutputSerializer,
-    SellerOutputSerializer,
     AuthResponseSerializer,
 )
 from .services import (
@@ -25,13 +21,11 @@ from .services import (
     create_address,
     set_default_address,
     delete_address,
-    register_seller,
 )
 from .selectors import get_addresses_for_user
 from .exceptions import (
     EmailAlreadyExistsError,
     AddressNotFoundError,
-    SellerAlreadyExistsError,
     InvalidCredentialsError,
 )
 
@@ -39,16 +33,17 @@ from .exceptions import (
 class RegisterView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(request=UserRegistrationInputSerializer, responses=AuthResponseSerializer)
+    @extend_schema(
+        request=UserRegistrationInputSerializer,
+        responses=AuthResponseSerializer
+    )
     def post(self, request):
         serializer = UserRegistrationInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         try:
             user = register_user(**serializer.validated_data)
         except EmailAlreadyExistsError as e:
             return Response({'detail': str(e)}, status=status.HTTP_409_CONFLICT)
-
         refresh = RefreshToken.for_user(user)
         return Response({
             'user': UserOutputSerializer(user).data,
@@ -62,16 +57,17 @@ class RegisterView(APIView):
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(request=LoginInputSerializer, responses=AuthResponseSerializer)
+    @extend_schema(
+        request=LoginInputSerializer,
+        responses=AuthResponseSerializer
+    )
     def post(self, request):
         serializer = LoginInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         try:
             user = authenticate_user(**serializer.validated_data)
         except InvalidCredentialsError as e:
             return Response({'detail': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-
         refresh = RefreshToken.for_user(user)
         return Response({
             'user': UserOutputSerializer(user).data,
@@ -89,7 +85,10 @@ class MeView(APIView):
     def get(self, request):
         return Response(UserOutputSerializer(request.user).data)
 
-    @extend_schema(request=UserProfileUpdateInputSerializer, responses=UserOutputSerializer)
+    @extend_schema(
+        request=UserProfileUpdateInputSerializer,
+        responses=UserOutputSerializer
+    )
     def patch(self, request):
         serializer = UserProfileUpdateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -105,21 +104,29 @@ class AddressListCreateView(APIView):
         addresses = get_addresses_for_user(user=request.user)
         return Response(AddressOutputSerializer(addresses, many=True).data)
 
-    @extend_schema(request=AddressInputSerializer, responses=AddressOutputSerializer)
+    @extend_schema(
+        request=AddressInputSerializer,
+        responses=AddressOutputSerializer
+    )
     def post(self, request):
         serializer = AddressInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         address = create_address(user=request.user, **serializer.validated_data)
-        return Response(AddressOutputSerializer(address).data, status=status.HTTP_201_CREATED)
+        return Response(
+            AddressOutputSerializer(address).data,
+            status=status.HTTP_201_CREATED
+        )
 
 
 class AddressDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(request=AddressInputSerializer, responses=AddressOutputSerializer)
+    @extend_schema(responses=AddressOutputSerializer)
     def patch(self, request, address_id):
         try:
-            address = set_default_address(user=request.user, address_id=address_id)
+            address = set_default_address(
+                user=request.user, address_id=address_id
+            )
         except AddressNotFoundError as e:
             return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
         return Response(AddressOutputSerializer(address).data)
@@ -131,19 +138,3 @@ class AddressDetailView(APIView):
         except AddressNotFoundError as e:
             return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class SellerRegisterView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    @extend_schema(request=SellerRegistrationInputSerializer, responses=SellerOutputSerializer)
-    def post(self, request):
-        serializer = SellerRegistrationInputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        try:
-            seller = register_seller(user=request.user, **serializer.validated_data)
-        except SellerAlreadyExistsError as e:
-            return Response({'detail': str(e)}, status=status.HTTP_409_CONFLICT)
-
-        return Response(SellerOutputSerializer(seller).data, status=status.HTTP_201_CREATED)
