@@ -95,6 +95,8 @@ def create_seller(*, user: User, store_name: str) -> Seller:
 
 # ── Product ───────────────────────────────────────────────────────────────────
 
+# catalog/services.py — fix create_product
+
 def create_product(
     *,
     seller: Seller,
@@ -117,14 +119,18 @@ def create_product(
             else f"{slugify(name)}-{uuid.uuid4().hex[:6]}"
         )
         try:
-            return Product.objects.create(
-                seller=seller,
-                category=category,
-                name=name,
-                slug=slug,
-                description=description,
-                brand=brand,
-            )
+            # Each attempt gets its own savepoint
+            # If it fails, only the savepoint rolls back
+            # The outer transaction stays healthy
+            with transaction.atomic():
+                return Product.objects.create(
+                    seller=seller,
+                    category=category,
+                    name=name,
+                    slug=slug,
+                    description=description,
+                    brand=brand,
+                )
         except IntegrityError:
             if attempt == 4:
                 raise

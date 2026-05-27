@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.db.models import (
-    Avg, Min, Sum, F, Value,
+    Min, Sum, F, Value,
     QuerySet, Prefetch,
     ExpressionWrapper, IntegerField,
 )
@@ -52,7 +52,7 @@ def get_products(
     """
     Returns unsliced QuerySet.
     Pagination is handled by DRF PageNumberPagination in the view.
-    Never slice here — it breaks DRF's .count() call.
+    avg_rating will be added when reviews domain is built.
     """
     safe_ordering = _PRODUCT_ORDERING.get(ordering, _DEFAULT_ORDERING)
 
@@ -78,7 +78,6 @@ def get_products(
         )
         .annotate(
             min_price=Min('variants__price'),
-            avg_rating=Avg('reviews__rating'),
             total_available=Coalesce(
                 Sum(
                     ExpressionWrapper(
