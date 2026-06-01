@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     # Third-party
     'rest_framework',
     'drf_spectacular',
+    'corsheaders',
     # Local
     'core',
     'users',
@@ -34,6 +35,8 @@ INSTALLED_APPS = [
 # ─── Middleware ────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
